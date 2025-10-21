@@ -1,4 +1,6 @@
 from LanguageProcessing.polish_parser.speech_parts import Nouns, Verbs, Word, Conjugation, WordType, Person
+import nltk
+import Levenshtein
 
 
 class Result:
@@ -58,7 +60,7 @@ class Parser:
         length = len(words[1])
         if verb is None:
             return Result(position, length,
-                          [w for w in self.verbs.get(gender=noun.gender, number=noun.number, person=Person.THIRD) if w.word.startswith(word)],
+                          [w for w in self.verbs.get(gender=noun.gender, number=noun.number, person=Person.THIRD) if Levenshtein.distance(w.word, word) <= 2 or w.word.startswith(word)],
                           "Unrecognized word")
         elif verb.type == WordType.VERB:
             if verb.number != noun.number:
@@ -82,7 +84,7 @@ class Parser:
             return None
 
         noun = categorized_words[2]
-        position = length + 1
+        position += length + 1
         word = words[2]
         length = len(words[2])
         if noun is None:  # suggest new words
@@ -120,3 +122,8 @@ class Parser:
             return categorized
 
         return None
+
+
+if __name__ == "__main__":
+    my_parser = Parser()
+    print(my_parser.parse("pan maja psa "))

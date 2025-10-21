@@ -155,7 +155,6 @@ class Nouns:
             columns.append(f"{n.name}_{c.name}_{g.name}")
 
         if word is not None:  # used in suggesting fixes
-            # FIXME might not work long term, cause matching multiple rows
             rows_with_word = self.nouns[(self.nouns == word).any(axis=1)]
             return [Word.from_str(v, k, WordType.NOUN) for k, col in rows_with_word[columns].items() for v in col]
 
@@ -202,12 +201,11 @@ class Verbs:
             columns.add(
                 f"{n.name}_{c.name}_{g.name if not isinstance(g, str) else g}_{Person.to_number(p)}_{t.name if not isinstance(t, str) else t}_{m.name}")
 
-        if word is not None:  # used in suggesting fixes
-            # FIXME might not work long term, cause matching multiple rows
-            rows_with_word = self.verbs[(self.verbs == word).any(axis=1)]
-            return [Word.from_str(v, k, WordType.VERB) for k, col in rows_with_word[columns].items() for v in col]
-
         columns.intersection_update(self.verbs.columns)
+
+        if word is not None:  # used in suggesting fixes
+            rows_with_word = self.verbs[(self.verbs == word).any(axis=1)]
+            return [Word.from_str(v, k, WordType.VERB) for k, col in rows_with_word[list(columns)].items() for v in col]
 
         if base is not _Unset:
             return [Word.from_str(v, k, WordType.VERB) for k, v in self.verbs.loc[base][list(columns)].items()]
