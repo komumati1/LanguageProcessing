@@ -103,6 +103,8 @@ class Word:
             number, conjugation, gender = column_name.split("_")
             number, conjugation, gender = Number[number], Conjugation[conjugation], Gender[gender]
         elif type == WordType.VERB:
+            if column_name == "VERB": # TODO ugly
+                return cls(word, None, None, None, None, None, None, WordType.VERB)
             number, conjugation, gender, person, tense, mood = column_name.split("_")
             number, conjugation, gender, person, tense, mood = (Number[number],
                                                                 Conjugation[conjugation],

@@ -63,6 +63,11 @@ class Parser:
                           [w for w in self.verbs.get(gender=noun.gender, number=noun.number, person=Person.THIRD) if Levenshtein.distance(w.word, word) <= 2 or w.word.startswith(word)],
                           "Unrecognized word")
         elif verb.type == WordType.VERB:
+            if verb.number is None: # it's just the base
+                return Result(position, length,
+                              self.verbs.get(base=verb.word, gender=noun.gender, number=noun.number,
+                                             person=Person.THIRD),
+                              f"Verb should match the noun number: {noun.number.value}. But is the verb is not conjugated.")
             if verb.number != noun.number:
                 return Result(position, length,
                               self.verbs.get(word=verb.word, gender=noun.gender, number=noun.number, person=Person.THIRD),
@@ -126,4 +131,4 @@ class Parser:
 
 if __name__ == "__main__":
     my_parser = Parser()
-    print(my_parser.parse("pan maja psa "))
+    print(my_parser.parse("pan mieć "))
