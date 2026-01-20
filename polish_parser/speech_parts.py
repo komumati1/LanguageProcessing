@@ -62,6 +62,8 @@ class Mood(Enum):
 class WordType(Enum):
     NOUN = "noun"
     VERB = "verb"
+    ADJECTIVE = "adjective"
+    PRONOUN = "pronoun"
 
 
 class Word:
@@ -91,6 +93,12 @@ class Word:
     def __repr__(self):
         return f"{self.word}"  # , {self.type}, {self.number}, {self.conjugation}, {self.gender})"
 
+    def __hash__(self):
+        return hash(self.word)
+
+    def __eq__(self, other):
+        return self.word == other.word
+
     @classmethod
     def from_str(cls, word: str, column_name: str, type: WordType):
         number = None
@@ -112,6 +120,12 @@ class Word:
                                                                 Person.from_number(int(person)),
                                                                 Tense[tense] if tense != "-" else None,
                                                                 Mood[mood])
+        elif type == WordType.ADJECTIVE:
+            number, conjugation, gender = column_name.split("_")
+            number, conjugation, gender = Number[number], Conjugation[conjugation], Gender[gender]
+        elif type == WordType.PRONOUN:
+            number, conjugation, gender = column_name.split("_")
+            number, conjugation, gender = Number[number], Conjugation[conjugation], Gender[gender]
         else:
             raise ValueError(f"Unrecognized type: {type}. Use 'WordType.NOUN' or 'WordType.VERB'.")
         return cls(word, number, conjugation, gender, person, tense, mood, type)
@@ -136,9 +150,12 @@ class Nouns:
         return instance
 
     def get_one(self, word: str) -> Word | None:
-        columns_with_word = next(iter(self.nouns.columns[(self.nouns == word).any()].tolist()),
-                                 None)  # TODO it can match multiple columns
+        columns_with_word = next(iter(self.nouns.columns[(self.nouns == word).any()].tolist()), None)  # TODO it can match multiple columns
         return Word.from_str(word, columns_with_word, WordType.NOUN) if columns_with_word is not None else None
+
+    def get_all(self, word: str) -> list[Word]:
+        columns_with_word = self.nouns.columns[(self.nouns == word).any()].tolist()
+        return [Word.from_str(word, c, WordType.NOUN) for c in columns_with_word]
 
     def get(
             self,
@@ -175,8 +192,7 @@ class Verbs:
         return instance
 
     def get_one(self, word: str) -> Word | None:
-        columns_with_word = next(iter(self.verbs.columns[(self.verbs == word).any()].tolist()),
-                                 None)  # TODO it can match multiple columns
+        columns_with_word = next(iter(self.verbs.columns[(self.verbs == word).any()].tolist()), None)  # TODO it can match multiple columns
         return Word.from_str(word, columns_with_word, WordType.VERB) if columns_with_word is not None else None
 
     def get(
@@ -213,6 +229,94 @@ class Verbs:
             return [Word.from_str(v, k, WordType.VERB) for k, v in self.verbs.loc[base][list(columns)].items()]
         else:
             return [Word.from_str(v, k, WordType.VERB) for k, col in self.verbs[list(columns)].items() for v in col]
+
+
+class Adjectives:
+    adjectives: pd.DataFrame
+
+    @classmethod
+    def from_file(cls):
+        instance = cls()
+        instance.adjectives = pd.read_csv(f"{module_dir}/adjectives.csv")
+        return instance
+
+    def get_one(self, word: str) -> Word | None:
+        columns_with_word = next(iter(self.adjectives.columns[(self.adjectives == word).any()].tolist()),None)  # TODO it can match multiple columns
+        return Word.from_str(word, columns_with_word, WordType.ADJECTIVE) if columns_with_word is not None else None
+
+    def get_all(self, word: str) -> list[Word]:
+        columns_with_word = self.adjectives.columns[(self.adjectives == word).any()].tolist()
+        return [Word.from_str(word, c, WordType.ADJECTIVE) for c in columns_with_word]
+
+    def get(
+            self,
+            *,
+            word: str | _Unset = _Unset,
+            base: str | list[str] | _Unset = _Unset,
+            number: Number | list[Number] | _Unset = _Unset,
+            conjugation: Conjugation | list[Conjugation] | _Unset = _Unset,
+            gender: Gender | list[Gender] | _Unset = _Unset,
+            person: Person | list[Person] | _Unset = _Unset,
+            tense: Tense | list[Tense] | _Unset = _Unset,
+            mood: Mood | list[Mood] | _Unset = _Unset
+    ) -> list[Word] | None:
+        number = get_possibilities(number, Number)
+        conjugation = get_possibilities(conjugation, Conjugation)
+        gender = get_possibilities(gender, Gender)
+
+        columns: list[str] = list()
+        for n, c, g in product(number, conjugation, gender):
+            columns.append(f"{n.name}_{c.name}_{g.name}")
+
+        if word is not None:  # used in suggesting fixes
+            rows_with_word = self.adjectives[(self.adjectives == word).any(axis=1)]
+            return [Word.from_str(v, k, WordType.ADJECTIVE) for k, col in rows_with_word[columns].items() for v in col]
+
+        return list({Word.from_str(v, k, WordType.ADJECTIVE) for k, col in self.adjectives[columns].items() for v in col})
+
+
+class Pronouns:
+    pronouns: pd.DataFrame
+
+    @classmethod
+    def from_file(cls):
+        instance = cls()
+        instance.pronouns = pd.read_csv(f"{module_dir}/pronouns.csv")
+        return instance
+
+    def get_one(self, word: str) -> Word | None:
+        columns_with_word = next(iter(self.pronouns.columns[(self.pronouns == word).any()].tolist()),None)  # TODO it can match multiple columns
+        return Word.from_str(word, columns_with_word, WordType.PRONOUN) if columns_with_word is not None else None
+
+    def get_all(self, word: str) -> list[Word]:
+        columns_with_word = self.pronouns.columns[(self.pronouns == word).any()].tolist()
+        return [Word.from_str(word, c, WordType.PRONOUN) for c in columns_with_word]
+
+    def get(
+            self,
+            *,
+            word: str | _Unset = _Unset,
+            base: str | list[str] | _Unset = _Unset,
+            number: Number | list[Number] | _Unset = _Unset,
+            conjugation: Conjugation | _Unset = _Unset,
+            gender: Gender | _Unset = _Unset,
+            person: Person | list[Person] | _Unset = _Unset,
+            tense: Tense | list[Tense] | _Unset = _Unset,
+            mood: Mood | list[Mood] | _Unset = _Unset
+    ) -> list[Word] | None:
+        number = get_possibilities(number, Number)
+        conjugation = get_possibilities(conjugation, Conjugation)
+        gender = get_possibilities(gender, Gender)
+
+        columns: list[str] = list()
+        for n, c, g in product(number, conjugation, gender):
+            columns.append(f"{n.name}_{c.name}_{g.name}")
+
+        if word is not None:  # used in suggesting fixes
+            rows_with_word = self.pronouns[(self.pronouns == word).any(axis=1)]
+            return [Word.from_str(v, k, WordType.PRONOUN) for k, col in rows_with_word[columns].items() for v in col]
+
+        return list({Word.from_str(v, k, WordType.PRONOUN) for k, col in self.pronouns[columns].items() for v in col})
 
 # nouns = Nouns.from_file()
 #
