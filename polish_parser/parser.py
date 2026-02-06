@@ -133,13 +133,13 @@ class Parser:
                               self.nouns.get(word=category.word, conjugation=Conjugation.NOM, gender=self.previous_genders,
                                              number=self.previous_numbers),
                               f"Subject should be in nominative form. But is in {category.conjugation.value}.")
-            elif not [p.gender for p in possible if p.gender not in self.previous_genders]:
+            elif not [p.gender for p in possible if p.gender in self.previous_genders]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM,
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Subject should match the gender of the previous word: {[p.value for p in self.previous_genders]}. But is in {category.gender.value}.")
-            elif not [p.number for p in possible if p.number not in self.previous_numbers]:
+            elif not [p.number for p in possible if p.number in self.previous_numbers]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM,
                                                   gender=self.previous_genders,
@@ -154,13 +154,13 @@ class Parser:
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM, gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Subject's adjective should be in nominative form. But is in {category.conjugation.value}.")
-            elif not [p.gender for p in possible if p.gender not in self.previous_genders]:
+            elif not [p.gender for p in possible if p.gender in self.previous_genders]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM,
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Subject's adjective should match the gender of the previous word: {[p.value for p in self.previous_genders]}. But is in {category.gender.value}.")
-            elif not [p.number for p in possible if p.number not in self.previous_numbers]:
+            elif not [p.number for p in possible if p.number in self.previous_numbers]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM,
                                                   gender=self.previous_genders,
@@ -199,13 +199,13 @@ class Parser:
                               self.nouns.get(word=category.word, conjugation=Conjugation.NOM, gender=self.previous_genders,
                                              number=self.previous_numbers),
                               f"Subject should be in nominative form. But is in {category.conjugation.value}.")
-            elif not [p.gender for p in possible if p.gender not in self.previous_genders]:
+            elif not [p.gender for p in possible if p.gender in self.previous_genders]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM,
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Subject should match the gender of the previous word: {[p.value for p in self.previous_genders]}. But is in {category.gender.value}.")
-            elif not [p.number for p in possible if p.number not in self.previous_numbers]:
+            elif not [p.number for p in possible if p.number in self.previous_numbers]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=Conjugation.NOM,
                                                   gender=self.previous_genders,
@@ -340,13 +340,13 @@ class Parser:
                               self.nouns.get(word=category.word, conjugation=verb.conjugation, gender=self.previous_genders,
                                              number=self.previous_numbers),
                               f"Object should be in {verb.conjugation} form. But is in {category.conjugation.value}.")
-            elif not [p.gender for p in possible if p.gender not in self.previous_genders]:
+            elif not [p.gender for p in possible if p.gender in self.previous_genders]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=verb.conjugation,
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Object should match the gender of the previous word: {[p.value for p in self.previous_genders]}. But is in {category.gender.value}.")
-            elif not [p.number for p in possible if p.number not in self.previous_numbers]:
+            elif not [p.number for p in possible if p.number in self.previous_numbers]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=verb.conjugation,
                                                   gender=self.previous_genders,
@@ -362,13 +362,13 @@ class Parser:
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Object's adjective should be in nominative form. But is in {category.conjugation.value}.")
-            elif not [p.gender for p in possible if p.gender not in self.previous_genders]:
+            elif not [p.gender for p in possible if p.gender in self.previous_genders]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=verb.conjugation,
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Object's adjective should match the gender of the previous word: {[p.value for p in self.previous_genders]}. But is in {category.gender.value}.")
-            elif not [p.number for p in possible if p.number not in self.previous_numbers]:
+            elif not [p.number for p in possible if p.number in self.previous_numbers]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=verb.conjugation,
                                                   gender=self.previous_genders,
@@ -408,13 +408,13 @@ class Parser:
                               self.nouns.get(word=category.word, conjugation=verb.conjugation, gender=self.previous_genders,
                                              number=self.previous_numbers),
                               f"Object should be in nominative form. But is in {category.conjugation.value}.")
-            elif not [p.gender for p in possible if p.gender not in self.previous_genders]:
+            elif not [p.gender for p in possible if p.gender in self.previous_genders]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=verb.conjugation,
                                                   gender=self.previous_genders,
                                                   number=self.previous_numbers),
                               f"Object should match the gender of the previous word: {[p.value for p in self.previous_genders]}. But is in {category.gender.value}.")
-            elif not [p.number for p in possible if p.number not in self.previous_numbers]:
+            elif not [p.number for p in possible if p.number in self.previous_numbers]:
                 return Result(self.position, length,
                               self.adjectives.get(word=category.word, conjugation=verb.conjugation,
                                                   gender=self.previous_genders,
@@ -498,4 +498,4 @@ class Parser:
 
 if __name__ == "__main__":
     my_parser = Parser()
-    print(my_parser.parse_multiple("jego pan miał dobrego psa     \n"))
+    print(my_parser.parse_multiple("moje zimne jaja mają jaja     \n"))
